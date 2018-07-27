@@ -1,0 +1,28 @@
+os: osx
+osx_image: xcode9.4
+language: generic
+
+# It might be nice to cache the Unity SDK, but the Travis CI documentation
+# suggests this will not result in much of a performance improvement.
+
+before_install:
+  - brew install git-lfs python@2
+  - curl -o install-unity.py https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py
+
+install:
+  - sudo $(brew --prefix python@2)/bin/python2 install-unity.py --package Unity --package Windows-Mono --package Linux 2018.2.0f2
+
+before_script:
+  - git lfs pull
+
+script:
+  - /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath . -executeMethod BuildFactory.BuildAll
+
+deploy:
+  provider: releases
+  api_key:
+    secure: WBaw66XtGtQYUXu6vjooye+D4XZIE0J5qbo/YyK610hO3UWFy0tS0jWUx95vBQn6rEWtCWYHmgh6e+/nsMB2lvENUOKyQ8+eC7kauAoCghcxbjVPCph+/x6xSl5Eg1/2AdGwOHVOhVf/XtF70EcjMtuoQWd6rFpNzG3m9ix8Y7NrVWDyxLMWAWv1dhCrQHLvqGh42CrpkyOk4tGXU0dbFQGkRLoWAlwpaiRomrjCKU5+Lti2b3meNZUMU0eCkkclc8MVjVdl5+YPiebBrVDZvchGtxS0mYrdPop1bo3JMnc+3hOwyW2etAXbw7wibKzU/XOvOj6fpa6XnmFVep3Ahf4mYUAFCwbYmeTl2hXgH/Z/VWTJrmWibBa3ZyeKubsyi9V/bs5Lzf//jtNTO/dIIgWBcWSLIX786OfWPvV47jTa4f3OXpG4q9mcko7ZQSyJq9kTZYh1B7w6c9IFHOUUpe/3NS5saYcgmLy+N5+cSg0KQXYTknNaNfVSF8+L9lhdESfy/VYGozsmJC+ZX3UWoWZ1oA+0Hh08zAuDtWC7thEI2NcBA1d5nO2KHUCZ/fBfre1uyowHiq0t0x3ef5T7hHMQxGdD3R2ESvRMKOwp6LsLXuZ6z2xNdSoaWYGa+OlPEBKPQrjP60rkwj8A7dX2uByOorbq8FPtIivn/N3U2ak=
+  file_glob: true
+  file: Build/*.zip
+  on:
+    tags: true
