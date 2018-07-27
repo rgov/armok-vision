@@ -1,0 +1,38 @@
+os: osx
+osx_image: xcode9.4
+language: generic
+
+env:
+  global:
+    # UNITY_USERNAME=
+    - secure: AidAA5n+T7ID7U10XCGheNe7lmk0z2uQTv8pWyNpNSAxcsjUmeXm0bNONwI7FgCYbl/Wue1QHGrQv8+2kSfH+GfyDI+k3M+9ylCRHRyF2h8OW8Ic5Uhc9v6XoDp5ioN/+taUZMLTs0mpIByDmQnPk3VX83MrIYNx8TzjDjIB00DKlqCC8OJPbtqYkb4lirCIyf+Kj9Z7KxxQFNHpli5krAZgV7kJs2oJrP34C3Og+qSO1b/pIy5kszeaNMFguvB3MySihYVAE4cIR08vbDKtnmXmJBN08axb3bIWOCGca5ickvw+RRPOspACg2LQqRzouwNL9U3tCMcui3EL5lgLGz7bUKLEkbI3WSXHgh7BFOOc1P20ZN6Df7Rhkm89L+yYhWKBaaAB5soz4gpccbNRZDjcHWImoV5LN7WsVgzyu9m+rCiZd+hyJzqcITMz3cofCzu8g3YO8E/YWEfWrrT6nhlAUQJm3a7LVBh34oNyo4KlUsPUQ85hzwTDCUu0sTx+lfRJMvEzLKQxMpHqVhlIoes/ryfaY4jvDef+Er7KPJMurigVsF/aBSfjFtvZcJOnVfel0UOOQP2MNlfWls/+5HOjozGmBWMRpWz6wzi92wz+qnnWNCxsQiIKZRQ3GmipTOhnJdOVLAW0kZ851Hqf6k/oF63U3zY8w4IiETjMFa0=
+    # UNITY_PASSWORD=
+    - secure: jpE4wqxm4mpLujz/7f1xOW9w386qTVp5alQ3be5EngPRgk/+wwQWoT2pLsQ/IEj4E1EfxTqJCtLNPh/KVs2CaOZ3hvRa1lZzCOlbUiOQp0KRxT+Xn+HW8oJ/hxGpYEXjIesD59QeM2waeZM0HvYMtwChDln6/seJwZZFKxPXUdVMMiEdnkawKXy95Xde9Roa/MztI+gt0t7cPKvekLIBzyh/DwUWs77Z7DFojhYKa2Rn8mDJDeTqU2TxnsRDhrIqmLcJ9A1q91M7NyY+rUqnIZO8yNVtl2xR5Obb2s+tPacYFk31wkRCOqpVg5A7t+QgaPwSHZCBHpyZLNswgvtVBaRPTWQieN6akdCboaa3q8eFJEs9q2V+ZhAtkMFyRISZeuNl0ynVdsb+BNtSDsiiojiDyggWbUOQ6IQDFmh8oUMcu7zQvNjc4xDRUvGm2krCx4j+CHtLd7rxoBRJsPJf20/geBQm9GzkxvZRprVdAB1SxboPawgHRrCp2MCBjto4agmkLSQ/8m/KHIB5Khx6FYnCQ4EJWsS+xJ1B1v5Pv/M77TEgOK9y+185PNX5WpR+jiDma8TGCzs9bt1eZ+Rivlt0CP+KrpiYbP4O2Mqy4tHBLd3FoToZr3ExIKRUXye3oAfLBbdv29Nlz18Rnrbci6mD5pVHiwGBKsK37NCPu04=
+
+
+before_install:
+  - brew install git-lfs python@2
+  - git lfs install
+  # Forked from https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py
+  - curl -o install-unity.py https://raw.githubusercontent.com/rgov/install-unity/activate/install-unity.py
+  - mkdir unity-data
+
+install:
+  - sudo $(brew --prefix python@2)/bin/python2 install-unity.py -v --package Unity --package Windows-Mono --package Linux --data-dir unity-data 2018.2.0f2
+  - sudo chown -R "$USER" unity-data
+  - $(brew --prefix python@2)/bin/python2 install-unity.py -v --activate --email "$UNITY_USERNAME" --password "$UNITY_PASSWORD" --data-dir unity-data 2018.2.0f2
+
+before_script:
+  - git lfs pull
+
+script:
+  - /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath . -logfile - -executeMethod BuildFactory.BuildAll
+
+deploy:
+  provider: releases
+  api_key:
+    secure: WBaw66XtGtQYUXu6vjooye+D4XZIE0J5qbo/YyK610hO3UWFy0tS0jWUx95vBQn6rEWtCWYHmgh6e+/nsMB2lvENUOKyQ8+eC7kauAoCghcxbjVPCph+/x6xSl5Eg1/2AdGwOHVOhVf/XtF70EcjMtuoQWd6rFpNzG3m9ix8Y7NrVWDyxLMWAWv1dhCrQHLvqGh42CrpkyOk4tGXU0dbFQGkRLoWAlwpaiRomrjCKU5+Lti2b3meNZUMU0eCkkclc8MVjVdl5+YPiebBrVDZvchGtxS0mYrdPop1bo3JMnc+3hOwyW2etAXbw7wibKzU/XOvOj6fpa6XnmFVep3Ahf4mYUAFCwbYmeTl2hXgH/Z/VWTJrmWibBa3ZyeKubsyi9V/bs5Lzf//jtNTO/dIIgWBcWSLIX786OfWPvV47jTa4f3OXpG4q9mcko7ZQSyJq9kTZYh1B7w6c9IFHOUUpe/3NS5saYcgmLy+N5+cSg0KQXYTknNaNfVSF8+L9lhdESfy/VYGozsmJC+ZX3UWoWZ1oA+0Hh08zAuDtWC7thEI2NcBA1d5nO2KHUCZ/fBfre1uyowHiq0t0x3ef5T7hHMQxGdD3R2ESvRMKOwp6LsLXuZ6z2xNdSoaWYGa+OlPEBKPQrjP60rkwj8A7dX2uByOorbq8FPtIivn/N3U2ak=
+  file_glob: true
+  file: Build/*.zip
+  on:
+    tags: true
