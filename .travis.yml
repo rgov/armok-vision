@@ -17,7 +17,7 @@ before_script:
   - git lfs pull
 
 script:
-  - /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath . -executeMethod BuildFactory.BuildAll
+  - /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath . -logfile - -executeMethod BuildFactory.BuildAll
 
 deploy:
   provider: releases
