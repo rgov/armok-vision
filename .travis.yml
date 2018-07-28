@@ -18,8 +18,6 @@ before_install:
 
 install:
   - sudo $(brew --prefix python@2)/bin/python2 install-unity.py --package Unity --package Windows-Mono --package Linux 2018.2.0f2
-
-after_install:
   - sudo $(brew --prefix python@2)/bin/python2 install-unity.py --activate --email "$UNITY_USERNAME" --password "$UNITY_PASSWORD" 2018.2.0f2
 
 before_script:
