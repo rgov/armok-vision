@@ -2,16 +2,24 @@ os: osx
 osx_image: xcode9.4
 language: generic
 
-# It might be nice to cache the Unity SDK, but the Travis CI documentation
-# suggests this will not result in much of a performance improvement.
+env:
+  # UNITY_USERNAME=
+  - secure: AidAA5n+T7ID7U10XCGheNe7lmk0z2uQTv8pWyNpNSAxcsjUmeXm0bNONwI7FgCYbl/Wue1QHGrQv8+2kSfH+GfyDI+k3M+9ylCRHRyF2h8OW8Ic5Uhc9v6XoDp5ioN/+taUZMLTs0mpIByDmQnPk3VX83MrIYNx8TzjDjIB00DKlqCC8OJPbtqYkb4lirCIyf+Kj9Z7KxxQFNHpli5krAZgV7kJs2oJrP34C3Og+qSO1b/pIy5kszeaNMFguvB3MySihYVAE4cIR08vbDKtnmXmJBN08axb3bIWOCGca5ickvw+RRPOspACg2LQqRzouwNL9U3tCMcui3EL5lgLGz7bUKLEkbI3WSXHgh7BFOOc1P20ZN6Df7Rhkm89L+yYhWKBaaAB5soz4gpccbNRZDjcHWImoV5LN7WsVgzyu9m+rCiZd+hyJzqcITMz3cofCzu8g3YO8E/YWEfWrrT6nhlAUQJm3a7LVBh34oNyo4KlUsPUQ85hzwTDCUu0sTx+lfRJMvEzLKQxMpHqVhlIoes/ryfaY4jvDef+Er7KPJMurigVsF/aBSfjFtvZcJOnVfel0UOOQP2MNlfWls/+5HOjozGmBWMRpWz6wzi92wz+qnnWNCxsQiIKZRQ3GmipTOhnJdOVLAW0kZ851Hqf6k/oF63U3zY8w4IiETjMFa0=
+  # UNITY_PASSWORD=
+  - secure: jpE4wqxm4mpLujz/7f1xOW9w386qTVp5alQ3be5EngPRgk/+wwQWoT2pLsQ/IEj4E1EfxTqJCtLNPh/KVs2CaOZ3hvRa1lZzCOlbUiOQp0KRxT+Xn+HW8oJ/hxGpYEXjIesD59QeM2waeZM0HvYMtwChDln6/seJwZZFKxPXUdVMMiEdnkawKXy95Xde9Roa/MztI+gt0t7cPKvekLIBzyh/DwUWs77Z7DFojhYKa2Rn8mDJDeTqU2TxnsRDhrIqmLcJ9A1q91M7NyY+rUqnIZO8yNVtl2xR5Obb2s+tPacYFk31wkRCOqpVg5A7t+QgaPwSHZCBHpyZLNswgvtVBaRPTWQieN6akdCboaa3q8eFJEs9q2V+ZhAtkMFyRISZeuNl0ynVdsb+BNtSDsiiojiDyggWbUOQ6IQDFmh8oUMcu7zQvNjc4xDRUvGm2krCx4j+CHtLd7rxoBRJsPJf20/geBQm9GzkxvZRprVdAB1SxboPawgHRrCp2MCBjto4agmkLSQ/8m/KHIB5Khx6FYnCQ4EJWsS+xJ1B1v5Pv/M77TEgOK9y+185PNX5WpR+jiDma8TGCzs9bt1eZ+Rivlt0CP+KrpiYbP4O2Mqy4tHBLd3FoToZr3ExIKRUXye3oAfLBbdv29Nlz18Rnrbci6mD5pVHiwGBKsK37NCPu04=
+
 
 before_install:
   - brew install git-lfs python@2
   - git lfs install
-  - curl -o install-unity.py https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py
+  # Forked from https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py
+  - curl -o install-unity.py https://raw.githubusercontent.com/rgov/install-unity/activate/install-unity.py
 
 install:
   - sudo $(brew --prefix python@2)/bin/python2 install-unity.py --package Unity --package Windows-Mono --package Linux 2018.2.0f2
+
+after_install:
+  - sudo $(brew --prefix python@2)/bin/python2 install-unity.py --activate --email "$UNITY_USERNAME" --password "$UNITY_PASSWORD" 2018.2.0f2
 
 before_script:
   - git lfs pull
