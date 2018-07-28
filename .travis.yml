@@ -14,11 +14,11 @@ before_install:
   - brew install git-lfs python@2
   - git lfs install
   # Forked from https://raw.githubusercontent.com/sttz/install-unity/master/install-unity.py
-  - curl -o install-unity.py https://raw.githubusercontent.com/rgov/install-unity/debugmode/install-unity.py
+  - curl -o install-unity.py https://raw.githubusercontent.com/rgov/install-unity/activate/install-unity.py
 
 install:
   - sudo $(brew --prefix python@2)/bin/python2 install-unity.py -v --package Unity --package Windows-Mono --package Linux 2018.2.0f2
-  - sudo $(brew --prefix python@2)/bin/python2 install-unity.py -v --activate --email "$UNITY_USERNAME" --password "$UNITY_PASSWORD" 2018.2.0f2
+  - $(brew --prefix python@2)/bin/python2 install-unity.py -v --activate --email "$UNITY_USERNAME" --password "$UNITY_PASSWORD" 2018.2.0f2
 
 before_script:
   - git lfs pull
